@@ -17,7 +17,7 @@ export async function fetchLeaderbord(
   to: number,
   contest: Contests
 ) {
-  let res = [];
+  let res = [] as any;
   for (let i = from; i < to; i++) {
     const pageData = await fetchPage(contest, i);
     res = [...res, ...pageData];
@@ -35,7 +35,7 @@ const fetchPage = async (contest: Contests, page: number) => {
   const data = await test.text();
   const root = parse(data);
   const rows = root.querySelectorAll(".table__row");
-  const pageData = [];
+  const pageData = [] as any;
   rows.forEach((row) => {
     pageData.push({
       id: row.childNodes[1].textContent,
@@ -48,7 +48,7 @@ const fetchPage = async (contest: Contests, page: number) => {
   return pageData;
 };
 
-const createUser = async (data, contest: Contests) => {
+const createUser = async (data: any, contest: Contests) => {
   await dbConnect();
   const user = await User.create({
     username: data.id,
@@ -61,7 +61,7 @@ const createUser = async (data, contest: Contests) => {
   return user;
 };
 
-export const updateContest = async (data, contest: Contests) => {
+export const updateContest = async (data: any, contest: Contests) => {
   await dbConnect();
   for (const user of data) {
     console.log(user.id);
@@ -103,7 +103,7 @@ function removeEmail(inputString: string) {
 }
 export const buildRaiting = async () => {
   const data = await getContestData();
-  const raiting = data.map((user) => {
+  const raiting = data.map((user: any) => {
     const id = user._id.toString();
     delete user._id;
     delete user.createdAt;
@@ -133,7 +133,7 @@ export const buildRaiting = async () => {
       return b.totalTasks - a.totalTasks;
     }
   });
-  raiting.forEach((user, index) => (user.position = index + 1));
+  raiting.forEach((user: any, index) => (user.position = index + 1));
   return raiting;
 };
 

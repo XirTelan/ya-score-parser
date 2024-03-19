@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export default async function Home() {
   // const res = await fetchLeaderbord();
-  const contest = await getStatus();
+  const contest: any = await getStatus();
   if (contest && contest.status == "update")
     return (
       <div className="flex flex-col min-h-screen w-full justify-center items-center">

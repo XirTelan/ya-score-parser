@@ -1,3 +1,5 @@
+Временный наспех сделанный парсер для тренировок 5,0 для постройки таблицы лидерборда.
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started

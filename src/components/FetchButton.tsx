@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-const FetchButton = ({ data }) => {
+const FetchButton = ({ data }: { data: any }) => {
   const darkTheme = createTheme({
     palette: {
       mode: "dark",
