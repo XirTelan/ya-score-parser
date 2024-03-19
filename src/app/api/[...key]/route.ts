@@ -19,8 +19,8 @@ export async function GET(
   const currentDate = new Date();
 
   // Get the day of the month
-
-  if (differenceInHours > 0) {
+  const timeDelay = parseInt(process.env?.UPDATE_DELAY || "1");
+  if (differenceInHours > timeDelay) {
     const dayOfMonth = currentDate.getDate();
 
     await Contest.updateOne({ contest: 1 }, { status: "update", step: 0 });
