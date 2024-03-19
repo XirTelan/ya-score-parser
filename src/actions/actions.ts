@@ -19,7 +19,7 @@ export async function fetchLeaderbord(
 ) {
   let res = [];
   for (let i = from; i < to; i++) {
-    const pageData = await fetchPage("contest3", i);
+    const pageData = await fetchPage(contest, i);
     res = [...res, ...pageData];
   }
   return res;
@@ -28,8 +28,7 @@ export async function fetchLeaderbord(
 const fetchPage = async (contest: Contests, page: number) => {
   const test = await fetch(`${contests[contest]}?p=${page}`, {
     headers: {
-      cookie:
-        "Session_id=3:1710770240.5.0.1707291275526:-H0Y1Q:84.1.2:1|317328333.0.2.3:1707291275|3:10284701.377257.fCeLverVN5pdFdkOutOrLsky2JQ",
+      cookie: `Session_id=${process.env.SESSION}`,
     },
   });
   console.log(test.status);
@@ -58,32 +57,26 @@ const createUser = async (data, contest: Contests) => {
       fine: data.fine,
     },
   });
-  console.log("creating", user);
   user.save();
   return user;
 };
 
-const updateContest = async (data, contest: Contests) => {
+export const updateContest = async (data, contest: Contests) => {
   await dbConnect();
-  console.log("start", data);
   for (const user of data) {
-    let userDb = await User.findOne({ username: user.id });
-    // console.log("Find:", userDb);
+    console.log(user.id);
+    const filter = { username: user.id };
+    const update = {
+      [contest]: {
+        tasks: user.tasks || 0,
+        fine: user.fine || 0,
+      },
+    };
+    let userDb = await User.findOneAndUpdate(filter, update, {
+      new: true,
+    });
     if (!userDb) {
-      // console.log("not find");
       userDb = await createUser(user, contest);
-    } else {
-      // console.log(" find");
-      console.log(user.id, user.fine);
-      await User.updateOne(
-        { username: user.id },
-        {
-          [contest]: {
-            tasks: data.tasks,
-            fine: data.fine,
-          },
-        }
-      );
     }
   }
 };
@@ -95,25 +88,6 @@ const getContestData = async () => {
 };
 
 export const handleUpdate = async () => {
-  await dbConnect();
-  const contest = await Contest.findOne({ contest: 1 });
-  console.log("contest", contest);
-  if (!contest) Contest.create({ contest: 1, date: Date.now() });
-  const differenceInMillis = Math.abs(Date.now() - contest.date);
-  const differenceInHours = differenceInMillis / (1000 * 60 * 60); // Convert milliseconds to hours
-  console.log("differenceInHours", differenceInHours);
-
-  if (differenceInHours > 1) {
-    const res1 = await fetchLeaderbord(0, 2, "contest1");
-    // const res2 = await fetchLeaderbord(0, 10, "contest2");
-    // const res3 = await fetchLeaderbord(0, 10, "contest3");
-    await updateContest(res1, "contest1");
-    // await updateContest(res2, "contest2");
-    // await updateContest(res3, "contest3");
-    // updateContest(res4)
-    await Contest.updateOne({ contest: 1 }, { date: Date.now() });
-  }
-
   return await buildRaiting();
   // fetchLeaderbord(0,10,'contest4')
 };
@@ -138,11 +112,13 @@ export const buildRaiting = async () => {
     const totalCount =
       (user.contest1?.tasks || 0) +
       (user.contest2?.tasks || 0) +
-      (user.contest3?.tasks || 0);
+      (user.contest3?.tasks || 0) +
+      (user.contest4?.tasks || 0);
     const totalFine =
       (user.contest1?.fine || 0) +
       (user.contest2?.fine || 0) +
-      (user.contest3?.fine || 0);
+      (user.contest3?.fine || 0) +
+      (user.contest4?.fine || 0);
     return {
       ...user,
       id: id,
@@ -157,7 +133,12 @@ export const buildRaiting = async () => {
       return b.totalTasks - a.totalTasks;
     }
   });
-  raiting.forEach((user, index) => (user.position = index));
-  console.log(raiting);
+  raiting.forEach((user, index) => (user.position = index + 1));
   return raiting;
+};
+
+export const getStatus = async () => {
+  await dbConnect();
+  const status = Contest.findOne({ contest: 1 }).lean();
+  return status;
 };

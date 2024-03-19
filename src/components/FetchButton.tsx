@@ -5,9 +5,6 @@ import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 const FetchButton = ({ data }) => {
-  //   const [data, setData] = useState();
-  //   const [isLoading, setIsLoading] = useState(false);
-
   const darkTheme = createTheme({
     palette: {
       mode: "dark",
@@ -46,8 +43,8 @@ const FetchButton = ({ data }) => {
       field: "contest4",
       headerName: "Contest 4",
       valueGetter: (params) =>
-        `${params.row.contest3?.tasks || 0} | ${
-          params.row.contest3?.fine || 0
+        `${params.row.contest4?.tasks || 0} | ${
+          params.row.contest4?.fine || 0
         }`,
     },
     { field: "totalTasks", headerName: "Итог" },
@@ -55,25 +52,23 @@ const FetchButton = ({ data }) => {
   ];
   //   if (isLoading) return <div>Loading</div>;
   return (
-    <div>
-      <div>
-        {data?.length > 0 && (
-          <ThemeProvider theme={darkTheme}>
-            <DataGrid
-              rows={data}
-              disableColumnSelector
-              disableDensitySelector
-              slots={{ toolbar: GridToolbar }}
-              columns={columns}
-              pageSizeOptions={[25, 50, 100]}
-              initialState={{
-                pagination: { paginationModel: { pageSize: 25 } },
-              }}
-            />
-          </ThemeProvider>
-        )}
-      </div>
-    </div>
+    <>
+      {data?.length > 0 && (
+        <ThemeProvider theme={darkTheme}>
+          <DataGrid
+            rows={data}
+            disableColumnSelector
+            disableDensitySelector
+            slots={{ toolbar: GridToolbar }}
+            columns={columns}
+            pageSizeOptions={[25, 50, 100]}
+            initialState={{
+              pagination: { paginationModel: { pageSize: 25 } },
+            }}
+          />
+        </ThemeProvider>
+      )}
+    </>
   );
 };
 
