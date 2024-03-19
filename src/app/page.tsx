@@ -1,5 +1,7 @@
 import { fetchLeaderbord, getStatus, handleUpdate } from "@/actions/actions";
-import FetchButton from "@/components/FetchButton";
+import Leaderboard from "@/components/Leaderboard";
+import RefreshButton from "@/components/RefreshButton";
+import UpdateButtonWrapper from "@/components/UpdateButtonWrapper";
 import Image from "next/image";
 
 export default async function Home() {
@@ -10,13 +12,15 @@ export default async function Home() {
       <div className="flex flex-col min-h-screen w-full justify-center items-center">
         <div className="p-4">Server is updating. Progress {contest.step}/6</div>
         <div className=" animate-spin border-t-cyan-500 rounded-full w-20 h-20 border-4 border-slate-600"></div>
+        <RefreshButton />
       </div>
     );
   const resData = await handleUpdate();
   return (
     <main className="flex flex-col items-center">
       <div className="pt-4 container">
-        <FetchButton data={resData} />
+        <Leaderboard data={resData} />
+        <UpdateButtonWrapper />
       </div>
     </main>
   );

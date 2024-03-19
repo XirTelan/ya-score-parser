@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-const FetchButton = ({ data }: { data: any }) => {
+const Leaderboard = ({ data }: { data: any }) => {
   const darkTheme = createTheme({
     palette: {
       mode: "dark",
@@ -50,7 +50,6 @@ const FetchButton = ({ data }: { data: any }) => {
     { field: "totalTasks", headerName: "Итог" },
     { field: "totalFine", headerName: "Штраф" },
   ];
-  //   if (isLoading) return <div>Loading</div>;
   return (
     <>
       {data?.length > 0 && (
@@ -72,4 +71,4 @@ const FetchButton = ({ data }: { data: any }) => {
   );
 };
 
-export default FetchButton;
+export default Leaderboard;
