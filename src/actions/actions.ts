@@ -143,9 +143,21 @@ export const buildRaiting = async () => {
       return b.totalTasks - a.totalTasks;
     }
   });
+  const contestCount = 4;
+  const tasksValue = 10;
+
+  const counts = [];
+  for (let i = 1; i <= contestCount; i++) {
+    const query: { [key: string]: number } = {};
+    for (let j = 1; j <= i; j++) {
+      query[`contest${j}.tasks`] = tasksValue;
+    }
+    counts.push(await User.countDocuments(query));
+  }
 
   raiting.forEach((user: any, index) => (user.position = index + 1));
   return {
+    summary: counts,
     stats: dataSet,
     items: raiting,
   };

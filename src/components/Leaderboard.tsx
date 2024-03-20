@@ -3,7 +3,7 @@ import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { BarChart } from "@mui/x-charts/BarChart";
 
-const Leaderboard = ({ data, stats }: { data: any; stats: any }) => {
+const Leaderboard = ({ data }: { data: any }) => {
   const darkTheme = createTheme({
     palette: {
       mode: "dark",
@@ -55,11 +55,10 @@ const Leaderboard = ({ data, stats }: { data: any; stats: any }) => {
   return (
     <>
       <ThemeProvider theme={darkTheme}>
-        {data?.length > 0 && (
+        {data.items?.length > 0 && (
           <DataGrid
-            rows={data}
+            rows={data.items}
             disableColumnSelector
-            disableDensitySelector
             slots={{ toolbar: GridToolbar }}
             columns={columns}
             pageSizeOptions={[25, 50, 100]}
@@ -68,7 +67,7 @@ const Leaderboard = ({ data, stats }: { data: any; stats: any }) => {
             }}
           />
         )}
-        <div>
+        <div className="flex items-center ">
           <BarChart
             xAxis={[
               {
@@ -77,11 +76,17 @@ const Leaderboard = ({ data, stats }: { data: any; stats: any }) => {
                 label: "Кол-во задач",
               },
             ]}
-            dataset={stats}
+            dataset={data.stats}
             series={[{ dataKey: "value", label: "Распределение по задачам" }]}
             yAxis={[{ label: "Количество решивших" }]}
             {...chartSetting}
           />
+          <div className="text-left pe-4">
+            <p>Закрыли 1й контест:{data.summary[0]}</p>
+            <p>Закрыли 1й+2й контест:{data.summary[1]}</p>
+            <p>Закрыли 3 контеста:{data.summary[2]}</p>
+            <p>Закрыли все 4 контеста:{data.summary[3]}</p>
+          </div>
         </div>
       </ThemeProvider>
     </>
