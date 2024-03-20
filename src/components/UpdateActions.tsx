@@ -42,7 +42,7 @@ const UpdateActions = () => {
         className={commonStyle}
         type="number"
       />
-      <label htmlFor="to">From</label>
+      <label htmlFor="to">To</label>
       <input
         id="to"
         value={data.to}
