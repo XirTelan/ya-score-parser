@@ -18,9 +18,14 @@ export default async function Home() {
       </div>
     );
   const resData = await buildRaiting();
+
+  const date = new Date(contest.date);
+  const localDateString = date.toLocaleDateString();
+  const localTimeString = date.toLocaleTimeString();
   return (
     <main className="flex flex-col items-center">
       <div className="pt-4 container">
+        <p>Последнее обновление: {`${localDateString} ${localTimeString}`}</p>
         <Leaderboard data={resData} />
         <p className="text-sm text-slate-400 ">{disclaimer}</p>
       </div>
