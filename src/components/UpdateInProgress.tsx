@@ -25,7 +25,7 @@ const UpdateInProgress = () => {
                 <p className="text-center mb-2">Пункт1. Нет, оно не зависло</p>
                 <Image
                   className="py-4"
-                  src={"/itslive.jpg"}
+                  src={"/static/itslive.jpg"}
                   alt={""}
                   width={250}
                   height={250}

@@ -6,7 +6,6 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function Home() {
-
   const disclaimer = `Дисклеймер: относитесь к этой информации с осторожностью. Т.к
   во-первых, скорее всего тут потеряны люди с повторяющимися именами.\n
   Во-вторых, парсятся только первые 30 страниц каждого контеста А
