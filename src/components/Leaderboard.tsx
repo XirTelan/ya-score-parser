@@ -1,6 +1,4 @@
 "use client";
-import { fetchLeaderbord, handleUpdate } from "@/actions/actions";
-import React, { useState } from "react";
 import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 

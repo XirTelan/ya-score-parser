@@ -76,6 +76,7 @@ export const updateContest = async (data: any, contest: Contests) => {
       new: true,
     });
     if (!userDb) {
+      console.log("create user", user.id);
       userDb = await createUser(user, contest);
     }
   }

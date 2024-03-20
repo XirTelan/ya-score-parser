@@ -21,7 +21,7 @@ const UpdateButtonWrapper = async () => {
     const remainingHours = Math.floor(differenceInMinutes / thresholdMinutes);
 
     if (remainingHours > 0) {
-      return `КД  ${remainingHours} часов и ${remainingMinutes} минут для обеовления`;
+      return `КД  ${remainingHours} часов и ${remainingMinutes} минут для обновления`;
     } else {
       return `КД ${remainingMinutes} минут для обновления`;
     }

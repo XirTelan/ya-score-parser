@@ -1,8 +1,10 @@
-import { fetchLeaderbord, getStatus, handleUpdate } from "@/actions/actions";
+import { buildRaiting, getStatus } from "@/actions/actions";
 import Leaderboard from "@/components/Leaderboard";
 import RefreshButton from "@/components/RefreshButton";
 import UpdateButtonWrapper from "@/components/UpdateButtonWrapper";
-import Image from "next/image";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function Home() {
   // const res = await fetchLeaderbord();
@@ -15,7 +17,7 @@ export default async function Home() {
         <RefreshButton />
       </div>
     );
-  const resData = await handleUpdate();
+  const resData = await buildRaiting();
   return (
     <main className="flex flex-col items-center">
       <div className="pt-4 container">

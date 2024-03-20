@@ -5,7 +5,7 @@ const ContestSchema = new mongoose.Schema(
     contest: Number,
     date: Date,
     status: String,
-    step: Number,
+    step: String,
   },
   {
     timestamps: true,

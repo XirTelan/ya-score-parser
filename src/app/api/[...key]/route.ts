@@ -12,35 +12,61 @@ export async function GET(
   await dbConnect();
   const contest = await Contest.findOne({ contest: 1 });
   if (!contest) Contest.create({ contest: 1, date: Date.now() });
-  if (contest.status == "update") return NextResponse.json("Already updating");
   const differenceInMillis = Math.abs(Date.now() - contest.date);
   const differenceInHours = differenceInMillis / (1000 * 60 * 60); // Convert milliseconds to hours
+  if (contest.status == "update") {
+    if (differenceInHours > 0.5)
+      await Contest.updateOne({ contest: 1 }, { status: "ok", step: "ok" });
+    return NextResponse.json("Already updating");
+  }
   console.log("differenceInHours", differenceInHours);
   const currentDate = new Date();
 
-  // Get the day of the month
   const timeDelay = parseInt(process.env?.UPDATE_DELAY || "1");
   if (differenceInHours > timeDelay) {
     const dayOfMonth = currentDate.getDate();
 
     await Contest.updateOne({ contest: 1 }, { status: "update", step: 0 });
-    // const res1 = await fetchLeaderbord(0, 10, "contest1");
-    await Contest.updateOne({ contest: 1 }, { step: 1 });
-    let res2;
-    if (dayOfMonth < 21) res2 = await fetchLeaderbord(0, 10, "contest2");
-    await Contest.updateOne({ contest: 1 }, { step: 2 });
-    const res3 = await fetchLeaderbord(0, 10, "contest3");
-    await Contest.updateOne({ contest: 1 }, { step: 3 });
-    let res4;
-    if (dayOfMonth > 22) res4 = await fetchLeaderbord(0, 10, "contest4");
-    // await updateContest(res1, "contest1");
-    await Contest.updateOne({ contest: 1 }, { step: 4 });
-    if (dayOfMonth < 21) await updateContest(res2, "contest2");
-    await Contest.updateOne({ contest: 1 }, { step: 5 });
-    await updateContest(res3, "contest3");
-    await Contest.updateOne({ contest: 1 }, { step: 6 });
-    if (dayOfMonth > 22) await updateContest(res4, "contest4");
+
+    const promises = [];
+
+    // promises.push(fetchLeaderbord(0, 30, "contest1"));
+    await Contest.updateOne({ contest: 1 }, { step: "parsing" });
+
+    if (dayOfMonth < 21) {
+      promises.push(fetchLeaderbord(0, 30, "contest2"));
+    }
+    promises.push(fetchLeaderbord(0, 30, "contest3"));
+    if (dayOfMonth > 22) {
+      promises.push(fetchLeaderbord(0, 30, "contest4"));
+    }
+
+    const results = await Promise.all(promises);
+
+    let index = 0;
+
+    // if (results[index]) {
+    //   await updateContest(results[index], "contest1");
+    //   index++;
+    // }
+
+    if (results[index] && dayOfMonth < 21) {
+      await updateContest(results[index], "contest2");
+      index++;
+    }
+
+    if (results[index]) {
+      await updateContest(results[index], "contest3");
+      index++;
+    }
+
+    if (results[index] && dayOfMonth > 22) {
+      await updateContest(results[index], "contest4");
+      index++;
+    }
+    console.log("All updated");
     await Contest.updateOne({ contest: 1 }, { date: Date.now(), status: "ok" });
+    console.log("Status - ok");
     return NextResponse.json("updated");
   } else {
     return NextResponse.json("Time is not come");
