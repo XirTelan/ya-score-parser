@@ -9,7 +9,6 @@ const Leaderboard = ({ data, stats }: { data: any; stats: any }) => {
       mode: "dark",
     },
   });
-  console.log(stats);
   const chartSetting = {
     width: 500,
     height: 300,
@@ -75,10 +74,12 @@ const Leaderboard = ({ data, stats }: { data: any; stats: any }) => {
               {
                 scaleType: "band",
                 dataKey: "tasks",
+                label: "Кол-во задач",
               },
             ]}
             dataset={stats}
             series={[{ dataKey: "value", label: "Распределение по задачам" }]}
+            yAxis={[{ label: "Количество решивших" }]}
             {...chartSetting}
           />
         </div>

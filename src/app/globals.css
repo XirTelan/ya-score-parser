@@ -12,3 +12,7 @@ body {
     text-wrap: balance;
   }
 }
+
+.MuiChartsAxis-label {
+  transform: translateX(-10px) !important;
+}
