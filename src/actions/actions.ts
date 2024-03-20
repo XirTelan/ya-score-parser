@@ -89,10 +89,6 @@ const getContestData = async () => {
   return users;
 };
 
-export const handleUpdate = async () => {
-  return await buildRaiting();
-  // fetchLeaderbord(0,10,'contest4')
-};
 function removeEmail(inputString: string) {
   const atIndex = inputString.indexOf("@");
   let result = "";
