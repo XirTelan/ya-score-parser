@@ -39,7 +39,7 @@ const initUpdate = async () => {
   }
   console.log("differenceInHours", differenceInHours);
 
-  await Contest.updateOne({ contest: 1 }, { status: "update", step: 0 });
+  await Contest.updateOne({ contest: 1 }, { status: "ok", step: "ok" });
   return true;
 };
 
@@ -54,4 +54,5 @@ export const updateOne = async (
 
   const res = await fetchLeaderbord(from, to, contest);
   await updateContest(res, contest as Contests);
+  await Contest.updateOne({ contest: 1 }, { status: "ok", step: "ok" });
 };
