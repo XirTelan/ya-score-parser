@@ -11,18 +11,13 @@ export default async function Home() {
   в-третьих, создатель, возможно -🦀`;
   const contest: any = await getStatus();
   const resData = await buildRaiting();
-
   const date = new Date(contest.date);
-  const localDateString = date.toLocaleDateString();
-  const localTimeString = date.toLocaleTimeString();
+
   return (
     <main className="flex flex-col items-center">
       <div className="pt-4 container">
         {contest && (
-          <p>
-            Последнее обновление: {`${localDateString} ${localTimeString}`} UTC
-            +0
-          </p>
+          <p>Последнее обновление: {`${date.toLocaleString("ru-RU")}`}</p>
         )}
         <Leaderboard data={resData} />
         <p className="text-sm text-slate-400 ">{disclaimer}</p>
