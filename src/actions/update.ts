@@ -6,7 +6,7 @@ import { Contests } from "../../types";
 
 export async function updateAll(from: number, to: number) {
   const promises = [];
-  if (!res) return;
+
   await dbConnect();
 
   promises.push(fetchLeaderbord(from, to, "contest1"));
@@ -19,7 +19,7 @@ export async function updateAll(from: number, to: number) {
   for (index; index < results.length; index++) {
     await updateContest(results[index], `contest${index}` as Contests);
   }
-
+  await Contest.findOneAndUpdate({ contest: 1 }, { date: Date.now() });
   console.log("All updated");
 }
 
@@ -31,5 +31,6 @@ export const updateOne = async (
   await dbConnect();
   const res = await fetchLeaderbord(from, to, contest);
   await updateContest(res, contest as Contests);
+  await Contest.findOneAndUpdate({ contest: 1 }, { date: Date.now() });
   console.log("All updated");
 };
