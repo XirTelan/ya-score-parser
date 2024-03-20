@@ -1,6 +1,5 @@
 "use client";
-import { Button } from "@mui/material";
-import { useRouter } from "next/navigation";
+
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import RefreshButton from "./RefreshButton";
@@ -25,7 +24,7 @@ const UpdateInProgress = () => {
                 <p className="text-center mb-2">Пункт1. Нет, оно не зависло</p>
                 <Image
                   className="py-4"
-                  src={"/itslive.jpg"}
+                  src={"/static/itslive.jpg"}
                   alt={""}
                   width={250}
                   height={250}

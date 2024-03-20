@@ -3,14 +3,8 @@ import dbConnect from "@/dbConnect";
 import Contest from "@/models/Contest";
 import User from "@/models/User";
 import { parse } from "node-html-parser";
-
-const contests = {
-  contest1: process.env.URL_C1,
-  contest2: process.env.URL_C2,
-  contest3: process.env.URL_C3,
-  contest4: process.env.URL_C4,
-};
-type Contests = keyof typeof contests;
+import { Contests } from "../../types";
+import { contests } from "@/helpers";
 
 export async function fetchLeaderbord(
   from: number,
