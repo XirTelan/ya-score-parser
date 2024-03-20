@@ -39,7 +39,10 @@ const initUpdate = async () => {
   }
   console.log("differenceInHours", differenceInHours);
 
-  await Contest.updateOne({ contest: 1 }, { status: "ok", step: "ok" });
+  await Contest.updateOne(
+    { contest: 1 },
+    { date: Date.now(), status: "ok", step: "ok" }
+  );
   return true;
 };
 
@@ -49,10 +52,13 @@ export const updateOne = async (
   to: number
 ) => {
   await dbConnect();
-  const status = initUpdate();
+  const status = await initUpdate();
   if (!status) return;
 
   const res = await fetchLeaderbord(from, to, contest);
   await updateContest(res, contest as Contests);
-  await Contest.updateOne({ contest: 1 }, { status: "ok", step: "ok" });
+  await Contest.updateOne(
+    { contest: 1 },
+    { date: Date.now(), status: "ok", step: "ok" }
+  );
 };
