@@ -8,6 +8,11 @@ export const revalidate = 0;
 
 export default async function Home() {
   // const res = await fetchLeaderbord();
+
+  const disclaimer = `Дисклеймер: относитесь к этой информации с осторожностью. Т.к
+  во-первых, скорее всего тут потеряны люди с повторяющимися именами.\n
+  Во-вторых, парсятся только первые 30 страниц каждого контеста А
+  в-третьих, создатель, возможно -🦀`;
   const contest: any = await getStatus();
   if (contest && contest.status == "update")
     return (
@@ -22,6 +27,7 @@ export default async function Home() {
     <main className="flex flex-col items-center">
       <div className="pt-4 container">
         <Leaderboard data={resData.items} stats={resData.stats} />
+        <p className="text-sm text-slate-400 ">{disclaimer}</p>
         <UpdateButtonWrapper />
       </div>
     </main>

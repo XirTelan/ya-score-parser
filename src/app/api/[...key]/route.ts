@@ -1,12 +1,21 @@
 import { fetchLeaderbord, updateContest } from "@/actions/actions";
 import dbConnect from "@/dbConnect";
 import Contest from "@/models/Contest";
+import User from "@/models/User";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
   { params: { key } }: { params: { key: string | string[] } }
 ) {
+  if (key == "update12") {
+    await dbConnect();
+    const count = await User.countDocuments({
+      "contest1.tasks": 10,
+      "contest2.tasks": 10,
+    });
+    return NextResponse.json(count);
+  }
   if (key != "update")
     return NextResponse.json("Wrong method", { status: 400 });
   await dbConnect();
