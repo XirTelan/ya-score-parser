@@ -104,6 +104,7 @@ function removeEmail(inputString: string) {
 }
 export const buildRaiting = async () => {
   const data = await getContestData();
+  const map = new Map();
   const raiting = data.map((user: any) => {
     const id = user._id.toString();
     delete user._id;
@@ -115,6 +116,7 @@ export const buildRaiting = async () => {
       (user.contest2?.tasks || 0) +
       (user.contest3?.tasks || 0) +
       (user.contest4?.tasks || 0);
+    map.set(totalCount, (map.get(totalCount) || 0) + 1);
     const totalFine =
       (user.contest1?.fine || 0) +
       (user.contest2?.fine || 0) +
@@ -127,6 +129,16 @@ export const buildRaiting = async () => {
       totalFine: totalFine,
     };
   });
+  const sortedMap = Array.from(map);
+  sortedMap.sort((a, b) => b[0] - a[0]);
+  const dataSet = [] as any;
+  sortedMap.forEach((pair) => {
+    dataSet.push({
+      tasks: pair[0],
+      value: pair[1],
+    });
+  });
+
   raiting.sort((a, b) => {
     if (a.totalTasks == b.totalTasks) {
       return a.totalFine - b.totalFine;
@@ -134,8 +146,12 @@ export const buildRaiting = async () => {
       return b.totalTasks - a.totalTasks;
     }
   });
+
   raiting.forEach((user: any, index) => (user.position = index + 1));
-  return raiting;
+  return {
+    stats: dataSet,
+    items: raiting,
+  };
 };
 
 export const getStatus = async () => {

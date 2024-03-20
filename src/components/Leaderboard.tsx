@@ -1,14 +1,19 @@
 "use client";
 import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { BarChart } from "@mui/x-charts/BarChart";
 
-const Leaderboard = ({ data }: { data: any }) => {
+const Leaderboard = ({ data, stats }: { data: any; stats: any }) => {
   const darkTheme = createTheme({
     palette: {
       mode: "dark",
     },
   });
-
+  console.log(stats);
+  const chartSetting = {
+    width: 500,
+    height: 300,
+  };
   const columns: GridColDef[] = [
     { field: "position", headerName: "№", minWidth: 50 },
     { field: "username", headerName: "Имя участника", minWidth: 250, flex: 1 },
@@ -50,8 +55,8 @@ const Leaderboard = ({ data }: { data: any }) => {
   ];
   return (
     <>
-      {data?.length > 0 && (
-        <ThemeProvider theme={darkTheme}>
+      <ThemeProvider theme={darkTheme}>
+        {data?.length > 0 && (
           <DataGrid
             rows={data}
             disableColumnSelector
@@ -63,8 +68,21 @@ const Leaderboard = ({ data }: { data: any }) => {
               pagination: { paginationModel: { pageSize: 25 } },
             }}
           />
-        </ThemeProvider>
-      )}
+        )}
+        <div>
+          <BarChart
+            xAxis={[
+              {
+                scaleType: "band",
+                dataKey: "tasks",
+              },
+            ]}
+            dataset={stats}
+            series={[{ dataKey: "value", label: "Распределение по задачам" }]}
+            {...chartSetting}
+          />
+        </div>
+      </ThemeProvider>
     </>
   );
 };

@@ -21,7 +21,7 @@ export default async function Home() {
   return (
     <main className="flex flex-col items-center">
       <div className="pt-4 container">
-        <Leaderboard data={resData} />
+        <Leaderboard data={resData.items} stats={resData.stats} />
         <UpdateButtonWrapper />
       </div>
     </main>
