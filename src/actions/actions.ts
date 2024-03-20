@@ -2,86 +2,6 @@
 import dbConnect from "@/dbConnect";
 import Contest from "@/models/Contest";
 import User from "@/models/User";
-import { parse } from "node-html-parser";
-
-const contests = {
-  contest1: process.env.URL_C1,
-  contest2: process.env.URL_C2,
-  contest3: process.env.URL_C3,
-  contest4: process.env.URL_C4,
-};
-type Contests = keyof typeof contests;
-
-export async function fetchLeaderbord(
-  from: number,
-  to: number,
-  contest: Contests
-) {
-  let res = [] as any;
-  for (let i = from; i < to; i++) {
-    const pageData = await fetchPage(contest, i);
-    res = [...res, ...pageData];
-  }
-  return res;
-}
-
-const fetchPage = async (contest: Contests, page: number) => {
-  const test = await fetch(`${contests[contest]}?p=${page}`, {
-    headers: {
-      cookie: `Session_id=${process.env.SESSION}`,
-    },
-    cache: "no-cache",
-  });
-  console.log(test.status);
-  const data = await test.text();
-  const root = parse(data);
-  const rows = root.querySelectorAll(".table__row");
-  const pageData = [] as any;
-  rows.forEach((row) => {
-    pageData.push({
-      id: row.childNodes[1].textContent,
-      tasks: row.childNodes[12].textContent,
-      fine: row.childNodes[13].textContent,
-    });
-  });
-  pageData.shift();
-  pageData.shift();
-  return pageData;
-};
-
-const createUser = async (data: any, contest: Contests) => {
-  await dbConnect();
-  const user = await User.create({
-    username: data.id,
-    [contest]: {
-      tasks: data.tasks,
-      fine: data.fine,
-    },
-  });
-  user.save();
-  return user;
-};
-
-export const updateContest = async (data: any, contest: Contests) => {
-  await dbConnect();
-  for (const user of data) {
-    console.log(user);
-    const filter = { username: user.id };
-    const update = {
-      [contest]: {
-        tasks: user.tasks || 0,
-        fine: user.fine || 0,
-      },
-    };
-    let userDb = await User.findOneAndUpdate(filter, update, {
-      new: true,
-    });
-    if (!userDb) {
-      console.log("create user", user.id);
-      userDb = await createUser(user, contest);
-    }
-  }
-};
 
 const getContestData = async () => {
   await dbConnect();
@@ -89,7 +9,7 @@ const getContestData = async () => {
   return users;
 };
 
-function removeEmail(inputString: string) {
+const removeEmail = (inputString: string) => {
   const atIndex = inputString.indexOf("@");
   let result = "";
   if (atIndex !== -1) {
@@ -98,7 +18,7 @@ function removeEmail(inputString: string) {
     result = inputString;
   }
   return result;
-}
+};
 export const buildRaiting = async () => {
   const data = await getContestData();
   const map = new Map();
