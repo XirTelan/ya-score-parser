@@ -25,7 +25,9 @@ export default async function Home() {
   return (
     <main className="flex flex-col items-center">
       <div className="pt-4 container">
-        <p>Последнее обновление: {`${localDateString} ${localTimeString}`}</p>
+        <p>
+          Последнее обновление: {`${localDateString} ${localTimeString}`} UTC +0
+        </p>
         <Leaderboard data={resData} />
         <p className="text-sm text-slate-400 ">{disclaimer}</p>
       </div>
