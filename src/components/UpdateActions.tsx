@@ -9,7 +9,7 @@ const UpdateActions = () => {
   const [data, setData] = useState({
     from: 0,
     to: 0,
-    contest: "contest1" as Contests,
+    contest: 0,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState("");
@@ -19,16 +19,11 @@ const UpdateActions = () => {
     },
   });
 
-  const submit = async (all: boolean) => {
+  const submit = async () => {
     const query = `/api?from=${data.from}&to=${data.to}`;
-    let res;
     setIsLoading(true);
     setStatus("Loading");
-    if (all) {
-      res = await fetch(`${query}&contest=all`);
-    } else {
-      res = await fetch(`${query}&contest=${data.contest}`);
-    }
+    const res = await fetch(`${query}&contest=${data.contest}`);
     setIsLoading(false);
     if (res.ok) setStatus("ok");
   };
@@ -57,19 +52,19 @@ const UpdateActions = () => {
       />
       <select
         value={data.contest}
-        onChange={(e) => setData((prev) => ({ ...prev, to: +e.target.value }))}
+        onChange={(e) =>
+          setData((prev) => ({ ...prev, contest: +e.target.value }))
+        }
         className={commonStyle}
       >
-        <option value="contest1">1</option>
-        <option value="contest2">2</option>
-        <option value="contest3">3</option>
-        <option value="contest4">4</option>
+        <option value={0}>Все</option>
+        <option value={1}>1</option>
+        <option value={2}>2</option>
+        <option value={3}>3</option>
+        <option value={4}>4</option>
       </select>
       <ThemeProvider theme={darkTheme}>
-        <Button onClick={async () => submit(false)}>
-          Обновить выбранный контест
-        </Button>
-        <Button onClick={async () => submit(true)}>Обновить всё</Button>
+        <Button onClick={submit}>Обновить</Button>
       </ThemeProvider>
     </div>
   );
