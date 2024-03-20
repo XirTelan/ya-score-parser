@@ -7,8 +7,8 @@ import dbConnect from "@/dbConnect";
 
 const UpdateActions = () => {
   const [data, setData] = useState({
-    from: 0,
-    to: 0,
+    from: 1,
+    to: 1,
     contest: 0,
   });
   const [isLoading, setIsLoading] = useState(false);

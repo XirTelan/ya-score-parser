@@ -29,7 +29,7 @@ const fetchPage = async (contest: Contests, page: number) => {
   console.log(test.status);
   const data = await test.text();
   const root = parse(data);
-  const rows = root.querySelectorAll(".table__row");
+  const rows = root.querySelectorAll(".table__body>.table__row");
   const pageData = [] as any;
   rows.forEach((row) => {
     pageData.push({
@@ -38,8 +38,7 @@ const fetchPage = async (contest: Contests, page: number) => {
       fine: row.childNodes[13].textContent,
     });
   });
-  pageData.shift();
-  pageData.shift();
+  console.log(pageData);
   return pageData;
 };
 
