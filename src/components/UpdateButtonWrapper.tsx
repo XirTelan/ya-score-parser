@@ -1,7 +1,7 @@
 import dbConnect from "@/dbConnect";
 import Contest from "@/models/Contest";
 import React from "react";
-import UpdateButton from "./UpdateButton";
+import UpdateButton from "./UpdateInProgress";
 
 const UpdateButtonWrapper = async () => {
   await dbConnect();

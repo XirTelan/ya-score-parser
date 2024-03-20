@@ -1,13 +1,11 @@
 import { buildRaiting, getStatus } from "@/actions/actions";
 import Leaderboard from "@/components/Leaderboard";
-import RefreshButton from "@/components/RefreshButton";
-import UpdateButtonWrapper from "@/components/UpdateButtonWrapper";
+import UpdateInProgress from "@/components/UpdateInProgress";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function Home() {
-  // const res = await fetchLeaderbord();
 
   const disclaimer = `Дисклеймер: относитесь к этой информации с осторожностью. Т.к
   во-первых, скорее всего тут потеряны люди с повторяющимися именами.\n
@@ -17,9 +15,7 @@ export default async function Home() {
   if (contest && contest.status == "update")
     return (
       <div className="flex flex-col min-h-screen w-full justify-center items-center">
-        <div className="p-4">Server is updating. Progress {contest.step}/6</div>
-        <div className=" animate-spin border-t-cyan-500 rounded-full w-20 h-20 border-4 border-slate-600"></div>
-        <RefreshButton />
+        <UpdateInProgress />
       </div>
     );
   const resData = await buildRaiting();
@@ -28,7 +24,6 @@ export default async function Home() {
       <div className="pt-4 container">
         <Leaderboard data={resData.items} stats={resData.stats} />
         <p className="text-sm text-slate-400 ">{disclaimer}</p>
-        <UpdateButtonWrapper />
       </div>
     </main>
   );

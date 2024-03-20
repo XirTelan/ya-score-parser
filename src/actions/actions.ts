@@ -30,6 +30,7 @@ const fetchPage = async (contest: Contests, page: number) => {
     headers: {
       cookie: `Session_id=${process.env.SESSION}`,
     },
+    cache: "no-cache",
   });
   console.log(test.status);
   const data = await test.text();
@@ -64,7 +65,7 @@ const createUser = async (data: any, contest: Contests) => {
 export const updateContest = async (data: any, contest: Contests) => {
   await dbConnect();
   for (const user of data) {
-    console.log(user.id);
+    console.log(user);
     const filter = { username: user.id };
     const update = {
       [contest]: {

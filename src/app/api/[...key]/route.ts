@@ -16,7 +16,7 @@ export async function GET(
     });
     return NextResponse.json(count);
   }
-  if (key != "update")
+  if (key != process.env.SECRET)
     return NextResponse.json("Wrong method", { status: 400 });
   await dbConnect();
   const contest = await Contest.findOne({ contest: 1 });
@@ -42,13 +42,13 @@ export async function GET(
     // promises.push(fetchLeaderbord(0, 30, "contest1"));
     await Contest.updateOne({ contest: 1 }, { step: "parsing" });
 
-    if (dayOfMonth < 21) {
-      promises.push(fetchLeaderbord(0, 30, "contest2"));
-    }
+    // if (dayOfMonth < 21) {
+    //   promises.push(fetchLeaderbord(0, 30, "contest2"));
+    // }
     promises.push(fetchLeaderbord(0, 30, "contest3"));
-    if (dayOfMonth > 22) {
-      promises.push(fetchLeaderbord(0, 30, "contest4"));
-    }
+    // if (dayOfMonth > 22) {
+    //   promises.push(fetchLeaderbord(0, 30, "contest4"));
+    // }
 
     const results = await Promise.all(promises);
 
@@ -59,20 +59,21 @@ export async function GET(
     //   index++;
     // }
 
-    if (results[index] && dayOfMonth < 21) {
-      await updateContest(results[index], "contest2");
-      index++;
-    }
+    // if (results[index] && dayOfMonth < 21) {
+    //   await updateContest(results[index], "contest2");
+    //   index++;
+    // }
 
     if (results[index]) {
+      console.log("update 3");
       await updateContest(results[index], "contest3");
       index++;
     }
 
-    if (results[index] && dayOfMonth > 22) {
-      await updateContest(results[index], "contest4");
-      index++;
-    }
+    // if (results[index] && dayOfMonth > 22) {
+    //   await updateContest(results[index], "contest4");
+    //   index++;
+    // }
     console.log("All updated");
     await Contest.updateOne({ contest: 1 }, { date: Date.now(), status: "ok" });
     console.log("Status - ok");

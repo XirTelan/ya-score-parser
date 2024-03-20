@@ -7,7 +7,11 @@ const RefreshButton = () => {
   const router = useRouter();
   return (
     <>
-      <Button variant="contained" onClick={() => router.refresh()}>
+      <Button
+        variant="outlined"
+        color="primary"
+        onClick={() => router.refresh()}
+      >
         Обновить
       </Button>
     </>
