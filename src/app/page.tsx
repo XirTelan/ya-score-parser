@@ -16,9 +16,7 @@ export default async function Home() {
   return (
     <main className="flex flex-col items-center">
       <div className="pt-4 container">
-        {contest && (
-          <p>Последнее обновление: {`${date.toLocaleString("ru-RU")}`}</p>
-        )}
+        {contest && <p>Последнее обновление: {`${date.toTimeString()}`}</p>}
         <Leaderboard data={resData} />
         <p className="text-sm text-slate-400 ">{disclaimer}</p>
       </div>
