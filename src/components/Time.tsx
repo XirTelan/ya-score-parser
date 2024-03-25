@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 
-const Time = ({ contest }) => {
+const Time = ({ contest }: { contest: { contest: string; date: Date }[] }) => {
   return (
     <div>
       {contest.map((con, index) => (
