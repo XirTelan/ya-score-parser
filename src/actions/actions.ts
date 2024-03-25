@@ -87,6 +87,6 @@ export const buildRaiting = async () => {
 export const getStatus = async (contest: string) => {
   await dbConnect();
   const status = await Contest.findOne({ contest: contest }).lean();
-  console.log("ss", status);
+  delete status._id;
   return status;
 };

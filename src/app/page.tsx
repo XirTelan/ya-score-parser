@@ -14,7 +14,6 @@ export default async function Home() {
   4й обновляется раз в час и парсится полностью`;
   const prom = [getStatus("contest3"), getStatus("contest4")];
   const contest: any = await Promise.all(prom);
-  console.log("contest", contest);
   const resData = await buildRaiting();
 
   return (
