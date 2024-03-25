@@ -4,25 +4,6 @@ import Contest from "@/models/Contest";
 
 import { Contests } from "../../types";
 
-export async function updateAll(from: number, to: number) {
-  const promises = [];
-
-  await dbConnect();
-
-  promises.push(fetchLeaderbord(from, to, "contest1"));
-  promises.push(fetchLeaderbord(from, to, "contest2"));
-  promises.push(fetchLeaderbord(from, to, "contest3"));
-  promises.push(fetchLeaderbord(from, to, "contest4"));
-  const results = await Promise.all(promises);
-
-  let index = 0;
-  for (index; index < results.length; index++) {
-    await updateContest(results[index], `contest${index}` as Contests);
-  }
-  await Contest.findOneAndUpdate({ contest: 1 }, { date: Date.now() });
-  console.log("All updated");
-}
-
 export const updateOne = async (
   contest: Contests,
   from: number,
@@ -30,7 +11,17 @@ export const updateOne = async (
 ) => {
   await dbConnect();
   const res = await fetchLeaderbord(from, to, contest);
+  console.log(res);
   await updateContest(res, contest as Contests);
-  await Contest.findOneAndUpdate({ contest: 1 }, { date: Date.now() });
-  console.log("All updated");
+  const date = Date.now();
+  const curContest = await Contest.findOneAndUpdate(
+    { contest: contest },
+    { date: date }
+  );
+  if (!curContest)
+    Contest.create({
+      contest: contest,
+      date: date,
+    });
+  console.log("All updated", new Date(date).toLocaleString("ru-RU"));
 };

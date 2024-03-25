@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const ContestSchema = new mongoose.Schema(
   {
-    contest: Number,
+    contest: String,
     date: Date,
     status: String,
     step: String,
