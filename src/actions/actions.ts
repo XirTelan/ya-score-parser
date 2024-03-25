@@ -2,6 +2,7 @@
 import dbConnect from "@/dbConnect";
 import Contest from "@/models/Contest";
 import User from "@/models/User";
+import { stat } from "fs";
 
 const getContestData = async () => {
   await dbConnect();
@@ -83,8 +84,9 @@ export const buildRaiting = async () => {
   };
 };
 
-export const getStatus = async () => {
+export const getStatus = async (contest: string) => {
   await dbConnect();
-  const status = Contest.findOne({ contest: 1 }).lean();
+  const status = await Contest.findOne({ contest: contest }).lean();
+  console.log("ss", status);
   return status;
 };
