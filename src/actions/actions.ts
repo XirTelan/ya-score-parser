@@ -2,7 +2,6 @@
 import dbConnect from "@/dbConnect";
 import Contest from "@/models/Contest";
 import User from "@/models/User";
-import { stat } from "fs";
 
 const getContestData = async () => {
   await dbConnect();
