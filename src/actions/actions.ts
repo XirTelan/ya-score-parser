@@ -78,14 +78,14 @@ export const buildRaiting = async () => {
   const tasksValue = 10;
 
   const counts = [];
-  for (let i = 1; i <= contestCount; i++) {
-    const query: { [key: string]: number } = {};
-    for (let j = 1; j <= i; j++) {
-      query[`contest${j}.tasks`] = tasksValue;
-    }
-    counts.push(await User.countDocuments(query));
-  }
 
+  counts.push(await User.countDocuments({ "contest1.tasks": 5 }));
+  counts.push(await User.countDocuments({ "contest2.tasks": 10 }));
+  counts.push(await User.countDocuments({ "contest3.tasks": 10 }));
+  counts.push(await User.countDocuments({ "contest4.tasks": 10 }));
+  counts.push(await User.countDocuments());
+
+  console.log(counts);
   raiting.forEach((user: any, index) => (user.position = index + 1));
   return {
     summary: counts,

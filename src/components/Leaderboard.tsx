@@ -83,16 +83,19 @@ const Leaderboard = ({ data }: { data: any }) => {
             {...chartSetting}
           />
           <div className="text-left pe-4">
-            <p>Закрыли 1й контест:</p>
-            <p>Закрыли 2 контеста:</p>
-            <p>Закрыли 3 контеста:</p>
-            <p>Закрыли все 4 контеста:</p>
+            <p>Решили все задачи 1го контеста:</p>
+            <p>Решили все задачи 2го контеста:</p>
+            <p>Решили все задачи 3го контеста:</p>
+            <p>Решили все задачи 4го контеста:</p>
+            <p>Всего участников: </p>
           </div>
           <div className="text-left pe-4">
             <p>{data.summary[0]}</p>
             <p>{data.summary[1]}</p>
             <p>{data.summary[2]}</p>
             <p>{data.summary[3]}</p>
+            <p>{data.items.length}</p>
+            <p></p>
           </div>
         </div>
       </ThemeProvider>
