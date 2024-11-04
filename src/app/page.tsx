@@ -11,8 +11,14 @@ export default async function Home() {
   Во-вторых, создатель, возможно -🦀
   Для 1го контеста спаршены все страницы.`;
 
-  const prom = [getStatus("contest3"), getStatus("contest4")];
+  const prom = [
+    getStatus("contest1"),
+    getStatus("contest2"),
+    getStatus("contest3"),
+    getStatus("contest4"),
+  ];
   const contest: any = await Promise.all(prom);
+  console.log(contest);
   const resData = await buildRaiting();
 
   return (
