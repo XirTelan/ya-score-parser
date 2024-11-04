@@ -10,16 +10,20 @@ const getContestData = async () => {
   return users;
 };
 
-const removeEmail = (inputString: string) => {
+function removeEmailPhone(inputString: string) {
   const atIndex = inputString.indexOf("@");
-  let result = "";
-  if (atIndex !== -1) {
-    result = inputString.substring(0, atIndex + 1) + "...";
-  } else {
-    result = inputString;
-  }
-  return result;
-};
+
+  if (inputString.startsWith("+"))
+    return (
+      inputString.substring(0, 5) +
+      "***" +
+      inputString.substring(inputString.length - 4)
+    );
+  return atIndex !== -1
+    ? inputString.substring(0, atIndex + 1) + "..."
+    : inputString;
+}
+
 export const buildRaiting = async () => {
   const data = await getContestData();
   const map = new Map();
@@ -28,7 +32,13 @@ export const buildRaiting = async () => {
     delete user._id;
     delete user.createdAt;
     delete user.updatedAt;
-    user.username = removeEmail(user.username);
+    user.username = removeEmailPhone(user.username);
+
+    const totalTries =
+      (user.contest1?.tries || 0) +
+      (user.contest2?.tries || 0) +
+      (user.contest3?.tries || 0) +
+      (user.contest4?.tries || 0);
     const totalCount =
       (user.contest1?.tasks || 0) +
       (user.contest2?.tasks || 0) +
@@ -45,6 +55,7 @@ export const buildRaiting = async () => {
       id: id,
       totalTasks: totalCount,
       totalFine: totalFine,
+      totalTries: totalTries,
     };
   });
   const sortedMap = Array.from(map);
@@ -59,7 +70,7 @@ export const buildRaiting = async () => {
 
   raiting.sort((a, b) => {
     if (a.totalTasks == b.totalTasks) {
-      return a.totalFine - b.totalFine;
+      return a.totalTries - b.totalTries;
     } else {
       return b.totalTasks - a.totalTasks;
     }

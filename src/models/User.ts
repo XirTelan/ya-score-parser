@@ -11,18 +11,22 @@ const UserSchema = new mongoose.Schema(
     contest1: {
       tasks: Number,
       fine: Number,
+      tries: Number,
     },
     contest2: {
       tasks: Number,
       fine: Number,
+      tries: Number,
     },
     contest3: {
       tasks: Number,
       fine: Number,
+      tries: Number,
     },
     contest4: {
       tasks: Number,
       fine: Number,
+      tries: Number,
     },
   },
   {

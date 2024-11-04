@@ -50,6 +50,7 @@ const Leaderboard = ({ data }: { data: any }) => {
         }`,
     },
     { field: "totalTasks", headerName: "Итог" },
+    { field: "totalTries", headerName: "* Попыток" },
     { field: "totalFine", headerName: "Штраф" },
   ];
   return (
