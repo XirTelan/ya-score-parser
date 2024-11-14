@@ -11,7 +11,6 @@ export default async function Home() {
     getContests(),
     getStats(),
   ]);
-  console.log("resData", resData);
 
   return (
     <main className="flex flex-col items-center">
