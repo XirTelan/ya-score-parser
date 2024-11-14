@@ -1,33 +1,48 @@
-import { buildRaiting, getStatus } from "@/actions/actions";
-import Leaderboard from "@/components/Leaderboard";
-import Time from "@/components/Time";
+import { buildRaiting, getContests, getStats } from "@/actions/actions";
+import Main from "@/components/Main";
+import { ContestDTO, StatisticDTO } from "@/types";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function Home() {
-  const disclaimer = `Дисклеймер: относитесь к этой информации с осторожностью. Т.к
-  во-первых, тут потеряны люди с повторяющимися именами.\n
-  Во-вторых, создатель, возможно -🦀
-  Для 1го контеста спаршены все страницы.`;
-
-  const prom = [
-    getStatus("contest1"),
-    getStatus("contest2"),
-    getStatus("contest3"),
-    getStatus("contest4"),
-  ];
-  const contest: any = await Promise.all(prom);
-  console.log(contest);
-  const resData = await buildRaiting();
+  const [resData, contestsInfo, stats] = await Promise.all([
+    buildRaiting(),
+    getContests(),
+    getStats(),
+  ]);
+  console.log("resData", resData);
 
   return (
     <main className="flex flex-col items-center">
-      <div className="pt-4 container">
-        {contest && <Time contest={contest} />}
-        <Leaderboard data={resData} />
-        <p className="text-sm text-slate-400 ">{disclaimer}</p>
-      </div>
+      <Main
+        rating={resData}
+        contestInfo={contestsInfo as ContestDTO[]}
+        stats={stats as StatisticDTO}
+      />
     </main>
   );
 }
+
+export type BuildRaiting = {
+  items: {
+    totalTasks: 25;
+    totalFine: 17499;
+    totalTries: 1;
+    byContest: {
+      [key: string]: {
+        tasks: "$tasks";
+        fine: "$fine";
+        tries: "$tries";
+        createdAt: "$createdAt";
+        updatedAt: "$updatedAt";
+      };
+    };
+    id: "BB";
+    position: 87;
+  }[];
+  stats: {
+    tasks: number;
+    value: number;
+  }[];
+};

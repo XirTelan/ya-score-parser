@@ -1,11 +1,26 @@
 import mongoose from "mongoose";
+const ContestStatsSchema = new mongoose.Schema(
+  {
+    task: String,
+    success: Number,
+    attempts: Number,
+  },
+  { _id: false }
+);
 
 const ContestSchema = new mongoose.Schema(
   {
-    contest: String,
-    date: Date,
+    contestTitle: String,
+    contestId: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    autoUpdate: Number,
+    attempts: String,
+    date: Number,
     status: String,
-    step: String,
+    stats: [ContestStatsSchema],
   },
   {
     timestamps: true,

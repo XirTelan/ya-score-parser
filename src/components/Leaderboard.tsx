@@ -1,104 +1,50 @@
 "use client";
+import { BuildRaiting } from "@/app/page";
+import { ContestDTO } from "@/types";
 import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { BarChart } from "@mui/x-charts/BarChart";
 
-const Leaderboard = ({ data }: { data: any }) => {
-  const darkTheme = createTheme({
-    palette: {
-      mode: "dark",
-    },
-  });
-  const chartSetting = {
-    width: 500,
-    height: 300,
-  };
+const Leaderboard = ({
+  data,
+  contests,
+}: {
+  data: BuildRaiting;
+  contests: ContestDTO[];
+}) => {
   const columns: GridColDef[] = [
     { field: "position", headerName: "№", minWidth: 50 },
-    { field: "username", headerName: "Имя участника", minWidth: 250, flex: 1 },
-    {
-      field: "contest1",
-
-      headerName: "Contest 1",
-      valueGetter: (params) =>
-        `${params.row.contest1?.tasks || 0} | ${
-          params.row.contest1?.fine || 0
-        }`,
-    },
-    {
-      field: "contest2",
-      headerName: "Contest 2",
-      valueGetter: (params) =>
-        `${params.row.contest2?.tasks || 0} | ${
-          params.row.contest2?.fine || 0
-        }`,
-    },
-    {
-      field: "contest3",
-      headerName: "Contest 3",
-      valueGetter: (params) =>
-        `${params.row.contest3?.tasks || 0} | ${
-          params.row.contest3?.fine || 0
-        }`,
-    },
-    {
-      field: "contest4",
-      headerName: "Contest 4",
-      valueGetter: (params) =>
-        `${params.row.contest4?.tasks || 0} | ${
-          params.row.contest4?.fine || 0
-        }`,
-    },
-    { field: "totalTasks", headerName: "Итог" },
-    { field: "totalTries", headerName: "* Попыток" },
-    { field: "totalFine", headerName: "Штраф" },
+    { field: "id", headerName: "Имя участника", minWidth: 250, flex: 1 },
   ];
+  contests.forEach((element, index) => {
+    columns.push({
+      field: `contest${index}`,
+      headerName: element.contestTitle,
+      valueGetter: (params) =>
+        `${params.row.byContest[element.contestId].tasks || 0} | ${
+          params.row.byContest[element.contestId].fine || 0
+        }`,
+    });
+  });
+  columns.push(
+    ...[
+      { field: "totalTasks", headerName: "Итог" },
+      { field: "totalTries", headerName: "* Попыток" },
+      { field: "totalFine", headerName: "Штраф" },
+    ]
+  );
   return (
     <>
-      <ThemeProvider theme={darkTheme}>
-        {data.items?.length > 0 && (
-          <DataGrid
-            rows={data.items}
-            disableColumnSelector
-            slots={{ toolbar: GridToolbar }}
-            columns={columns}
-            pageSizeOptions={[25, 50, 100]}
-            initialState={{
-              pagination: { paginationModel: { pageSize: 25 } },
-            }}
-          />
-        )}
-        <div className="flex items-center ">
-          <BarChart
-            xAxis={[
-              {
-                scaleType: "band",
-                dataKey: "tasks",
-                label: "Кол-во задач",
-              },
-            ]}
-            dataset={data.stats}
-            series={[{ dataKey: "value", label: "Распределение по задачам" }]}
-            yAxis={[{ label: "Количество решивших" }]}
-            {...chartSetting}
-          />
-          <div className="text-left pe-4">
-            <p>Решили все задачи 1го контеста:</p>
-            <p>Решили все задачи 2го контеста:</p>
-            <p>Решили все задачи 3го контеста:</p>
-            <p>Решили все задачи 4го контеста:</p>
-            <p>Всего участников: </p>
-          </div>
-          <div className="text-left pe-4">
-            <p>{data.summary[0]}</p>
-            <p>{data.summary[1]}</p>
-            <p>{data.summary[2]}</p>
-            <p>{data.summary[3]}</p>
-            <p>{data.items.length}</p>
-            <p></p>
-          </div>
-        </div>
-      </ThemeProvider>
+      {data.items?.length > 0 && (
+        <DataGrid
+          rows={data.items}
+          disableColumnSelector
+          slots={{ toolbar: GridToolbar }}
+          columns={columns}
+          pageSizeOptions={[25, 50, 100]}
+          initialState={{
+            pagination: { paginationModel: { pageSize: 25 } },
+          }}
+        />
+      )}
     </>
   );
 };

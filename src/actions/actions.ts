@@ -1,13 +1,132 @@
 "use server";
 import dbConnect from "@/dbConnect";
 import Contest from "@/models/Contest";
-import User from "@/models/User";
+import Rating from "@/models/Rating";
+import { ContestData, ContestDTO } from "@/types";
 
 const getContestData = async () => {
   await dbConnect();
-  const users = await User.find().lean();
-  return users;
+  try {
+    const results = await Rating.aggregate([
+      {
+        $group: {
+          _id: "$userId",
+          totalTasks: { $sum: "$tasks" },
+          totalFine: { $sum: "$fine" },
+          totalTries: { $sum: "$tries" },
+          byContest: {
+            $push: {
+              k: "$contestId",
+              v: {
+                tasks: "$tasks",
+                fine: "$fine",
+                tries: "$tries",
+                createdAt: "$createdAt",
+                updatedAt: "$updatedAt",
+              },
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
+          byContest: {
+            $arrayToObject: "$byContest",
+          },
+        },
+      },
+      {
+        $sort: {
+          totalTasks: -1,
+          totalTries: 1,
+          totalFine: 1,
+        },
+      },
+    ]);
+
+    return results;
+  } catch (err) {
+    console.error("Error grouping and sorting ratings by userId:", err);
+  }
 };
+export async function getUserCountByTotalTasksAndTotalTries() {
+  try {
+    await dbConnect();
+    const results = await Rating.aggregate([
+      {
+        $group: {
+          _id: "$userId",
+          totalTasks: { $sum: "$tasks" },
+          totalTries: { $sum: "$tries" },
+        },
+      },
+      {
+        $match: {
+          totalTries: { $lte: 10 },
+        },
+      },
+      {
+        $group: {
+          _id: { totalTasks: "$totalTasks", totalTries: "$totalTries" },
+          userCount: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          totalTasks: "$_id.totalTasks",
+          totalTries: "$_id.totalTries",
+          userCount: "$userCount",
+        },
+      },
+      {
+        $sort: { totalTasks: -1, totalTries: 1 },
+      },
+    ]);
+
+    return results;
+  } catch (err) {
+    console.error(
+      "Error aggregating user counts by totalTasks and totalTries:",
+      err
+    );
+  }
+}
+export async function getCountWithMaxTasksForEachContest() {
+  await dbConnect();
+  const contests = (await getContests()) as ContestDTO[];
+  const queue: Promise<unknown>[] = [];
+  contests.forEach((contest) => {
+    queue.push(
+      Rating.countDocuments({
+        contestId: contest.contestId,
+        tasks: contest.stats.length,
+      })
+    );
+  });
+  const queryRes = await Promise.all(queue);
+  const dataRes = contests.map((contest, indx) => {
+    return { id: contest.contestId, count: queryRes[indx] };
+  });
+  return dataRes;
+}
+export async function getStats() {
+  const [contestUserCount, contestSumByTaskTries] = await Promise.all([
+    getCountWithMaxTasksForEachContest(),
+    getUserCountByTotalTasksAndTotalTries(),
+  ]);
+  return { contestUserCount, contestSumByTaskTries };
+}
+
+export async function getContests() {
+  try {
+    await dbConnect();
+    const res = await Contest.find({}, { _id: 0, updatedAt: 0 }).lean();
+    return res;
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 function removeEmailPhone(inputString: string) {
   const atIndex = inputString.indexOf("@");
@@ -24,80 +143,40 @@ function removeEmailPhone(inputString: string) {
 }
 
 export const buildRaiting = async () => {
-  const data = await getContestData();
+  await dbConnect();
+  const data = (await getContestData()) as ContestData[];
   const map = new Map();
-  const raiting = data.map((user: any) => {
-    const id = user._id.toString();
+  const raiting = data.map((user: any, indx) => {
+    user.id = removeEmailPhone(user._id);
     delete user._id;
-    delete user.createdAt;
-    delete user.updatedAt;
-    user.username = removeEmailPhone(user.username);
-
-    const totalTries =
-      (user.contest1?.tries || 0) +
-      (user.contest2?.tries || 0) +
-      (user.contest3?.tries || 0) +
-      (user.contest4?.tries || 0);
-    const totalCount =
-      (user.contest1?.tasks || 0) +
-      (user.contest2?.tasks || 0) +
-      (user.contest3?.tasks || 0) +
-      (user.contest4?.tasks || 0);
-    map.set(totalCount, (map.get(totalCount) || 0) + 1);
-    const totalFine =
-      (user.contest1?.fine || 0) +
-      (user.contest2?.fine || 0) +
-      (user.contest3?.fine || 0) +
-      (user.contest4?.fine || 0);
+    user.position = indx + 1;
+    map.set(user.totalTasks, (map.get(user.totalTasks) || 0) + 1);
     return {
       ...user,
-      id: id,
-      totalTasks: totalCount,
-      totalFine: totalFine,
-      totalTries: totalTries,
     };
   });
-  const sortedMap = Array.from(map);
-  sortedMap.sort((a, b) => b[0] - a[0]);
-  const dataSet = [] as any;
-  sortedMap.forEach((pair) => {
-    dataSet.push({
-      tasks: pair[0],
-      value: pair[1],
+  const dataSet: {
+    tasks: number;
+    value: number;
+  }[] = [];
+
+  Array.from(map)
+    .sort((a, b) => b[0] - a[0])
+    .forEach(([tasks, count]) => {
+      dataSet.push({
+        tasks,
+        value: count,
+      });
     });
-  });
-
-  raiting.sort((a, b) => {
-    if (a.totalTasks == b.totalTasks) {
-      return a.totalTries - b.totalTries;
-    } else {
-      return b.totalTasks - a.totalTasks;
-    }
-  });
-  const contestCount = 4;
-  const tasksValue = 10;
-
-  const counts = [];
-
-  counts.push(await User.countDocuments({ "contest1.tasks": 5 }));
-  counts.push(await User.countDocuments({ "contest2.tasks": 10 }));
-  counts.push(await User.countDocuments({ "contest3.tasks": 10 }));
-  counts.push(await User.countDocuments({ "contest4.tasks": 10 }));
-  counts.push(await User.countDocuments());
-
-  console.log(counts);
-  raiting.forEach((user: any, index) => (user.position = index + 1));
   return {
-    summary: counts,
-    stats: dataSet,
     items: raiting,
+    stats: dataSet,
   };
 };
 
 export const getStatus = async (contest: string) => {
   await dbConnect();
   const status = (await Contest.findOne({ contest: contest }).lean()) as any;
-  console.log(status);
   if (status) delete status._id;
   return status;
 };
