@@ -19,8 +19,8 @@ const Leaderboard = ({
       field: `contest${index}`,
       headerName: element.contestTitle,
       valueGetter: (params) =>
-        `${params.row.byContest[element.contestId].tasks || 0} | ${
-          params.row.byContest[element.contestId].fine || 0
+        `${params.row.byContest[element.contestId]?.tasks || 0} | ${
+          params.row.byContest[element.contestId]?.fine || 0
         }`,
     });
   });
